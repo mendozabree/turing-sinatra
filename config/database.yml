@@ -1,0 +1,5 @@
+adapter: mysql2
+host: 127.0.0.1
+username: red
+password: "#1T0uch3"
+database: turing_sinatra
