@@ -10,19 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 2019_07_17_153555) do
 
-  create_table "attribute", primary_key: "attribute_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "name", limit: 100, null: false
-  end
-
-  create_table "attribute_value", primary_key: "attribute_value_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "attribute_values", primary_key: "attribute_value_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "attribute_id", null: false
     t.string "value", limit: 100, null: false
     t.index ["attribute_id"], name: "idx_attribute_value_attribute_id"
   end
 
-  create_table "audit", primary_key: "audit_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "attributes", primary_key: "attribute_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "name", limit: 100, null: false
+  end
+
+  create_table "audits", primary_key: "audit_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "order_id", null: false
     t.datetime "created_on", null: false
     t.text "message", null: false
@@ -30,14 +30,14 @@ ActiveRecord::Schema.define(version: 0) do
     t.index ["order_id"], name: "idx_audit_order_id"
   end
 
-  create_table "category", primary_key: "category_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "categories", primary_key: "category_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "department_id", null: false
     t.string "name", limit: 100, null: false
     t.string "description", limit: 1000
     t.index ["department_id"], name: "idx_category_department_id"
   end
 
-  create_table "customer", primary_key: "customer_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "customers", primary_key: "customer_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", limit: 50, null: false
     t.string "email", limit: 100, null: false
     t.string "password", limit: 50, null: false
@@ -56,12 +56,12 @@ ActiveRecord::Schema.define(version: 0) do
     t.index ["shipping_region_id"], name: "idx_customer_shipping_region_id"
   end
 
-  create_table "department", primary_key: "department_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "departments", primary_key: "department_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", limit: 100, null: false
     t.string "description", limit: 1000
   end
 
-  create_table "order_detail", primary_key: "item_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "order_details", primary_key: "item_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "order_id", null: false
     t.integer "product_id", null: false
     t.string "attributes", limit: 1000, null: false
@@ -87,7 +87,17 @@ ActiveRecord::Schema.define(version: 0) do
     t.index ["tax_id"], name: "idx_orders_tax_id"
   end
 
-  create_table "product", primary_key: "product_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "product_attributes", primary_key: ["product_id", "attribute_value_id"], options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "product_id", null: false
+    t.integer "attribute_value_id", null: false
+  end
+
+  create_table "product_categories", primary_key: ["product_id", "category_id"], options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "product_id", null: false
+    t.integer "category_id", null: false
+  end
+
+  create_table "products", primary_key: "product_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", limit: 100, null: false
     t.string "description", limit: 1000, null: false
     t.decimal "price", precision: 10, scale: 2, null: false
@@ -99,17 +109,7 @@ ActiveRecord::Schema.define(version: 0) do
     t.index ["name", "description"], name: "idx_ft_product_name_description", type: :fulltext
   end
 
-  create_table "product_attribute", primary_key: ["product_id", "attribute_value_id"], options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.integer "product_id", null: false
-    t.integer "attribute_value_id", null: false
-  end
-
-  create_table "product_category", primary_key: ["product_id", "category_id"], options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.integer "product_id", null: false
-    t.integer "category_id", null: false
-  end
-
-  create_table "review", primary_key: "review_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "reviews", primary_key: "review_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "customer_id", null: false
     t.integer "product_id", null: false
     t.text "review", null: false
@@ -119,18 +119,18 @@ ActiveRecord::Schema.define(version: 0) do
     t.index ["product_id"], name: "idx_review_product_id"
   end
 
-  create_table "shipping", primary_key: "shipping_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "shipping_details", primary_key: "shipping_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "shipping_type", limit: 100, null: false
     t.decimal "shipping_cost", precision: 10, scale: 2, null: false
     t.integer "shipping_region_id", null: false
     t.index ["shipping_region_id"], name: "idx_shipping_shipping_region_id"
   end
 
-  create_table "shipping_region", primary_key: "shipping_region_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "shipping_regions", primary_key: "shipping_region_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "shipping_region", limit: 100, null: false
   end
 
-  create_table "shopping_cart", primary_key: "item_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "shopping_carts", primary_key: "item_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "cart_id", limit: 32, null: false
     t.integer "product_id", null: false
     t.string "attributes", limit: 1000, null: false
@@ -140,7 +140,7 @@ ActiveRecord::Schema.define(version: 0) do
     t.index ["cart_id"], name: "idx_shopping_cart_cart_id"
   end
 
-  create_table "tax", primary_key: "tax_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "taxes", primary_key: "tax_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "tax_type", limit: 100, null: false
     t.decimal "tax_percentage", precision: 10, scale: 2, null: false
   end
