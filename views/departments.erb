@@ -2,7 +2,9 @@
 <ul>
   <% @departments.each do |department| %>
     <li>
-      <%= department.name %>
+      <a href="/departments/<%= department.name %>">
+        <%= department.name %>
+      </a>
     </li>
   <% end %>
 </ul>
