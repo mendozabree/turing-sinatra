@@ -1,3 +1,4 @@
+<a href="/">Home</a>
 <h3>All Departments</h3>
 <ul>
   <% @departments.each do |department| %>
@@ -5,7 +6,7 @@
       <a href="/departments/<%= department.name %>">
         <%= department.name %>
       </a>
+      <p><%= department.description %></p>
     </li>
   <% end %>
 </ul>
-<a href="/">Back to Home</a>
