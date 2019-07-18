@@ -1,2 +1,2 @@
-class Departments < ActiveRecord::Base
+class Department < ActiveRecord::Base
 end
