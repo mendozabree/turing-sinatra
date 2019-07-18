@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_17_153555) do
+ActiveRecord::Schema.define(version: 2019_07_18_064220) do
 
   create_table "attribute_values", primary_key: "attribute_value_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "attribute_id", null: false
@@ -20,6 +20,11 @@ ActiveRecord::Schema.define(version: 2019_07_17_153555) do
 
   create_table "attributes", primary_key: "attribute_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", limit: 100, null: false
+  end
+
+  create_table "attributes_products", primary_key: ["product_id", "attribute_value_id"], options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "product_id", null: false
+    t.integer "attribute_value_id", null: false
   end
 
   create_table "audits", primary_key: "audit_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -35,6 +40,11 @@ ActiveRecord::Schema.define(version: 2019_07_17_153555) do
     t.string "name", limit: 100, null: false
     t.string "description", limit: 1000
     t.index ["department_id"], name: "idx_category_department_id"
+  end
+
+  create_table "categories_products", primary_key: ["product_id", "category_id"], options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "product_id", null: false
+    t.integer "category_id", null: false
   end
 
   create_table "customers", primary_key: "customer_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -85,16 +95,6 @@ ActiveRecord::Schema.define(version: 2019_07_17_153555) do
     t.index ["customer_id"], name: "idx_orders_customer_id"
     t.index ["shipping_id"], name: "idx_orders_shipping_id"
     t.index ["tax_id"], name: "idx_orders_tax_id"
-  end
-
-  create_table "product_attributes", primary_key: ["product_id", "attribute_value_id"], options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.integer "product_id", null: false
-    t.integer "attribute_value_id", null: false
-  end
-
-  create_table "product_categories", primary_key: ["product_id", "category_id"], options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.integer "product_id", null: false
-    t.integer "category_id", null: false
   end
 
   create_table "products", primary_key: "product_id", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
