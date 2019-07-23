@@ -1,3 +1,14 @@
-adapter: mysql2
-host: 127.0.0.1
-database: turing_sinatra
+default: &default
+  adapter: mysql2
+  host: 127.0.0.1
+  pool: 2
+  username: <%= ENV['DB_USER']  %>
+  password: <%= ENV['DB_PASS'] %>
+
+development:
+  <<: *default
+  database: turing
+
+test:
+  <<: *default
+  database: turing_test

@@ -4,7 +4,6 @@ class RenameTables < ActiveRecord::Migration[5.2]
     rename_table :category, :categories
     rename_table :attribute_value, :attribute_values
     rename_table :audit, :audits
-    rename_table :category, :categories
     rename_table :customer, :customers
     rename_table :order_detail, :order_details
     rename_table :product, :products

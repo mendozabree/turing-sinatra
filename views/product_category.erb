@@ -1,7 +1,9 @@
-<p>
-  <% @product_category.each do |category| %>
+<a href="/">Home</a>
+<a href="/categories">Categories</a>
+
+<% @pdt_cat[:product_category].each do |category| %>
   <p>
-    <%= category.name %>
+    Category: <%= category.name %>
   </p>
-  <% end %>
-</p>
+<% end %>
+<p>Product: <%= @pdt_cat[:product] %></p>
