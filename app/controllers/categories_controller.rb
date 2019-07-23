@@ -1,27 +1,9 @@
-require 'sinatra'
-require 'active_record'
-require './models/departments.rb'
-require './models/categories.rb'
-require './models/products.rb'
 require 'sinatra/activerecord'
+require './app/models/categories.rb'
+require './app/models/products.rb'
 
-set :database_file, 'config/database.yml'
-
-class App < Sinatra::Base
-  get '/' do
-    erb :index
-  end
-
-  get '/departments' do
-    @departments = Department.all
-    erb :departments
-  end
-
-  get'/departments/:name' do
-    @department = Department.find_by_name(params[:name])
-    erb :department
-  end
-
+# CategoriesController
+class CategoriesController < ApplicationController
   get '/categories' do
     @categories = Category.all
     erb :categories
