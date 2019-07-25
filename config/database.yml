@@ -3,7 +3,7 @@ default: &default
   host: 127.0.0.1
   pool: 2
   username: <%= ENV['DB_USER']  %>
-  password: <%= ENV['DB_PASS'] %>
+  password: <%= ENV['DB_PSWD'] %>
 
 development:
   <<: *default

@@ -14,11 +14,39 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 ENV['RACK_ENV'] = 'test'
+require './config/environment'
+require 'rack/test'
+require 'rspec'
+require 'factory_bot'
+require './app/controllers/application_controller'
+require 'database_cleaner'
+require 'capybara/rspec'
+require 'shoulda-matchers'
+require 'faker'
+require 'pry'
+require 'selenium-webdriver'
+require 'chromedriver-helper'
+
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :active_record
+    with.library :active_model
+  end
+end
+
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
+  config.include FactoryBot::Syntax::Methods
+
+  config.before(:suite) do
+    FactoryBot.find_definitions
+  end
+
   config.include Rack::Test::Methods
+
   config.expect_with :rspec do |expectations|
     # This option will default to `true` in RSpec 4. It makes the `description`
     # and `failure_message` of custom matchers include text for helper methods
@@ -30,6 +58,20 @@ RSpec.configure do |config|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end
 
+  config.before do
+    DatabaseCleaner.strategy = :truncation
+  end
+
+  config.before(:all) do
+    DatabaseCleaner.clean
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
+
+  config.include Capybara
+
   # rspec-mocks config goes here. You can use an alternate test double
   # library (such as bogus or mocha) by changing the `mock_with` option here.
   config.mock_with :rspec do |mocks|
@@ -38,6 +80,9 @@ RSpec.configure do |config|
     # `true` in RSpec 4.
     mocks.verify_partial_doubles = true
   end
+
+  config.include(Shoulda::Matchers::ActiveModel, type: :model)
+  config.include(Shoulda::Matchers::ActiveRecord, type: :model)
 
   # This option will default to `:apply_to_host_groups` in RSpec 4 (and will
   # have no way to turn it off -- the option exists only for backwards
@@ -100,3 +145,18 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 =end
 end
+
+def app
+  described_class
+end
+
+Capybara.app = Rack::Builder.parse_file("config.ru").first
+
+Capybara.server = :webrick
+
+Capybara.register_driver :selenium_chrome do |app|
+  Capybara::Selenium::Driver.new(app, browser: :chrome)
+end
+
+Capybara.javascript_driver = :selenium_chrome
+# RSpec.configure { |c| c.include RSpecMixin }

@@ -3,7 +3,7 @@
 <ul>
   <% @departments.each do |department| %>
     <li>
-      <a href="/departments/<%= department.name %>">
+      <a href="/departments/<%= department.name %>" class="<%= department.name.parameterize.underscore %>">
         <%= department.name %>
       </a>
       <p><%= department.description %></p>

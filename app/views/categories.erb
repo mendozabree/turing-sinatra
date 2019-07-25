@@ -3,7 +3,7 @@
 <ul>
   <% @categories.each do |category| %>
     <li>
-      <a href="/categories/<%=category.name %>">
+      <a href="/categories/<%=category.name %>" class="<%=category.name %>">
         <%= category.name %>
       </a>
       <p><%= category.description %></p>
